@@ -1,11 +1,13 @@
 ﻿using Aplication.Contexts;
 using Aplication.Students;
+using Application.Professors;
 using AutoMapper;
 using Domain.Students;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Contexts;
+using Persistence.Professors;
 using Persistence.Students;
 using System;
 using System.Collections.Generic;
@@ -24,7 +26,7 @@ namespace Persistence
             services.AddScoped<IApplicationDbContext>(options => options.GetService<ApplicationDbContext>());
 
             services.AddScoped<IStudentRepository, StudentRepository>();
-
+            services.AddScoped<IProfessorRepository, ProfessorRepository>();
 
 
 
