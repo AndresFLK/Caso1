@@ -79,7 +79,7 @@
         btnEdit.forEach(btn => {
             btn.addEventListener("click", (event) => {
                 const professorId = event.target.getAttribute("data-professor-id");
-                window.location.href = `/Professors/Edit?professorId=${professorId}`;
+                window.location.href = `/Professors/Edit?id=${professorId}`;
             });
         });
 

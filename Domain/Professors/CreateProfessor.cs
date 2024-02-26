@@ -12,6 +12,6 @@ namespace Domain.Professor
 
         public string LastName { get; set; }
 
-        public string phone { get; set; }
+        public string phoneNumber { get; set; }
     }
 }

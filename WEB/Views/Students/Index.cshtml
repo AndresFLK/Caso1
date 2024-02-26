@@ -79,9 +79,10 @@
         const btnEdit = document.querySelectorAll("#students tbody tr td .btnEditar");
         btnEdit.forEach(btn => {
             btn.addEventListener("click", (event) => {
-                const studentId = event.target.getAttribute("data-student-batch");
-                const url = "/Students/Edit?batch=" + studentId;
-                window.location.href = url;
+                const batch = event.target.getAttribute("data-student-batch");
+                const url = "/Students/Edit?batch=" + batch;
+                window.location.href = `/Students/Edit?batch=${batch}`;
+
             });
         });//fin btnEdit
 

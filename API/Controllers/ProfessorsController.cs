@@ -81,7 +81,7 @@ namespace API.Controllers
 
         //-------------Professors DELETE---------------- ERROR 500
         [HttpDelete]
-        //[DisableCors]
+        [DisableCors]
         public IActionResult Delete([FromQuery] int id)
         {
             var result = _service.Delete(id);
