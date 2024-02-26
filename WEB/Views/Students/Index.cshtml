@@ -1,68 +1,116 @@
 ﻿@{
     ViewData["Title"] = "Students";
 }
+<div>
+    <button><a asp-action="Create" asp-controller="Students">Añadir Estudiante </a> </button>
+</div>
 
-
-<!----- [Insert] ---->
 <table id="students" class="table table-striped table-hover">
     <thead>
-        <tr class="border-bottom">
+        <tr>
             <th>Batch</th>
-            <th>Full Name</th>
+            <th>Full name</th>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-
+        <tr></tr>
     </tbody>
+
 </table>
 
-
-
-
-
-
-
-
-
-
-
 <script>
-    window.addEventListener("DOMContentLoaded", async(event) => {
+    window.addEventListener("DOMContentLoaded", async (event) => {
+
         const students = await fetch("https://localhost:44302/api/students", {
             "method": "GET",
             "mode": "cors",
             "cache": "no-cache",
             "headers": {
-                    "Content-Type": "application/json"
+                "Content-Type": "application/json"
             }
         })
             .then((response) => response.json())
             .catch((error) => { console.log(error); });
 
         if (students) {
-            console.log(students);
-            const tbody = document.querySelector("#students tbody"); 
+            const tbody = document.querySelector("#students tbody");
             for (let index = 0; index < students.length; index++) {
-                const student = students[index]
+                const student = students[index];
                 const row = document.createElement("tr");
 
-                let cell= document.createElement("td");
-                cell.innerText = student.Bacth;
-                row.appendChild(cell)
+                //--batch estudiante
+                let cell = document.createElement("td");
+                cell.innerText = student.batch;
+                row.appendChild(cell);
 
+                //-- nombre estudiante
                 cell = document.createElement("td");
-                cell.innerText = `${student.FirstName} ${student.LastName}`;
-                row.appendChild(cell)
+                cell.innerText = `${student.firstName} ${student.lastName}`;
+                row.appendChild(cell);
 
+                //--boton con accion de redireccionar a editar
                 cell = document.createElement("td");
-                cell.innerText = "[Edit] [Delete]";
-                row.appendChild(cell)
+                const btnEdit = document.createElement("button");
+                btnEdit.innerText = "Editar";
+                btnEdit.setAttribute("data-student-batch", student.batch);
+                btnEdit.setAttribute("type", "button");
+                btnEdit.setAttribute("class", "btnEditar");
+                cell.appendChild(btnEdit);
+                row.appendChild(cell);
 
+                //--boton con accion de eliminar
+                cell = document.createElement("td");
+                const btnDelete = document.createElement("button");
+                btnDelete.innerText = "Eliminar";
+                btnDelete.setAttribute("data-student-id", student.id);
+                btnDelete.setAttribute("type", "button");
+                btnDelete.setAttribute("class", "btnDelete");
+                cell.appendChild(btnDelete);
+                row.appendChild(cell);
+
+                //--se agrega todo en el row
                 tbody.appendChild(row);
-             }
-        }
-    });
-</script>
+            }
 
-`
+        }
+
+        //--- -- evento para redireccionar a editar estudiante
+        const btnEdit = document.querySelectorAll("#students tbody tr td .btnEditar");
+        btnEdit.forEach(btn => {
+            btn.addEventListener("click", (event) => {
+                const studentId = event.target.getAttribute("data-student-batch");
+                const url = "/Students/Edit?batch=" + studentId;
+                window.location.href = url;
+            });
+        });//fin btnEdit
+
+
+        //--- evento para eliminar estudiante
+        const btnDelete = document.querySelectorAll("#students tbody tr td .btnDelete");
+        btnDelete.forEach(btn => {
+            btn.addEventListener("click", async (event) => {
+                const studentId = event.target.getAttribute("data-student-id");
+                
+                const data = { "id": studentId };
+                const result = await fetch("https://localhost:44302/api/students", {
+                    "method": "DELETE",
+                    "cache": "no-cache",
+                    "mode": "cors",
+                    "headers": {
+                        "Content-Type": "application/json"
+                    },
+                    "body": JSON.stringify(data)
+                })
+                    .then((response) => response.json())
+                    .catch((error) => { console.log(error); });
+
+                if (result) {
+                    event.target.parentElement.parentElement.remove();
+                }
+            });
+        });//fin btnDelete
+
+    });//fin window.addEventListener
+
+</script>
