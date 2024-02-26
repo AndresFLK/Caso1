@@ -1,0 +1,112 @@
+﻿@{
+    ViewData["Title"] = "Professors";
+}
+
+<div>
+    <button><a asp-action="Create" asp-controller="Professors">Añadir Profesor </a> </button>
+</div>
+
+<table id="professors" class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Full name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr></tr>
+    </tbody>
+
+</table>
+
+<script>
+    window.addEventListener("DOMContentLoaded", async (event) => {
+        const professors = await fetch("https://localhost:44302/api/professors", {
+            "method": "GET",
+            "mode": "cors",
+            "cache": "no-cache",
+            "headers": {
+                "Content-Type": "application/json"
+            }
+        })
+            .then((response) => response.json())
+            .catch((error) => { console.log(error); });
+
+        if (professors) {
+            const tbody = document.querySelector("#professors tbody");
+            for (let index = 0; index < professors.length; index++) {
+                const professor = professors[index];
+                const row = document.createElement("tr");
+
+                //--id profesor
+                let cell = document.createElement("td");
+                cell.innerText = professor.id;
+                row.appendChild(cell);
+
+                //-- nombre profesor
+                cell = document.createElement("td");
+                cell.innerText = `${professor.firstName} ${professor.lastName}`;
+                row.appendChild(cell);
+
+                //--boton con accion de redireccionar a editar
+                cell = document.createElement("td");
+                const btnEdit = document.createElement("button");
+                btnEdit.innerText = "Editar";
+                btnEdit.setAttribute("data-professor-id", professor.id);
+                btnEdit.setAttribute("type", "button");
+                btnEdit.setAttribute("class", "btnEditar");
+                cell.appendChild(btnEdit);
+                row.appendChild(cell);
+
+                //--boton con accion de eliminar
+                cell = document.createElement("td");
+                const btnDelete = document.createElement("button");
+                btnDelete.innerText = "Eliminar";
+                btnDelete.setAttribute("data-professor-id", professor.id);
+                btnDelete.setAttribute("type", "button");
+                btnDelete.setAttribute("class", "btnDelete");
+                cell.appendChild(btnDelete);
+                row.appendChild(cell);
+
+                //--se agregar la fila a la tabla
+                tbody.appendChild(row);
+            }
+        }//fin if professors
+
+        //boton de editar
+        const btnEdit = document.querySelectorAll(".btnEditar");
+        btnEdit.forEach(btn => {
+            btn.addEventListener("click", (event) => {
+                const professorId = event.target.getAttribute("data-professor-id");
+                window.location.href = `/Professors/Edit?professorId=${professorId}`;
+            });
+        });
+
+        //--boton de eliminar
+        const btnDelete = document.querySelectorAll(".btnDelete");
+        btnDelete.forEach(btn => {
+            btn.addEventListener("click", async (event) => {
+                const studentId = event.target.getAttribute("data-professor-id");
+
+                const data = { "id": studentId };
+                const result = await fetch("https://localhost:44302/api/professors", {
+                    "method": "DELETE",
+                    "cache": "no-cache",
+                    "mode": "cors",
+                    "headers": {
+                        "Content-Type": "application/json"
+                    },
+                    "body": JSON.stringify(data)
+                })
+                    .then((response) => response.json())
+                    .catch((error) => { console.log(error); });
+
+                if (result) {
+                    event.target.parentElement.parentElement.remove();
+                }
+            });
+        });//fin btnDelete
+
+    });
+</script>
